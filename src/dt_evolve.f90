@@ -31,7 +31,7 @@ subroutine dt_evolve(it) ! Now coding
 
 !== First half dt
     kz(ikz) = kz0(ikz) + Act_old
-    eps_t(1) = eps_d
+    eps_t(1) = eps_d  -0.5d0/mass_h*(kr(ikr)**2+kz(ikz)**2)
     eps_t(2) = eps_c1 +0.5d0/mass_c1*(kr(ikr)**2+kz(ikz)**2)
     eps_t(3) = eps_c2 +0.5d0/mass_c2*(kr(ikr)**2+kz(ikz)**2)
 
@@ -61,7 +61,7 @@ subroutine dt_evolve(it) ! Now coding
 
 !== Second half dt
     kz(ikz) = kz0(ikz) + Act_new
-    eps_t(1) = eps_d
+    eps_t(1) = eps_d  -0.5d0/mass_h*(kr(ikr)**2+kz(ikz)**2)
     eps_t(2) = eps_c1 +0.5d0/mass_c1*(kr(ikr)**2+kz(ikz)**2)
     eps_t(3) = eps_c2 +0.5d0/mass_c2*(kr(ikr)**2+kz(ikz)**2)
 
