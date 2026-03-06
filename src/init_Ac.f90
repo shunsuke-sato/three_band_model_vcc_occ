@@ -9,6 +9,7 @@ subroutine init_Ac
   implicit none
   integer :: it
   real(8) :: tt,xx
+  real(8) :: t_side, rate_int
 
   allocate(Act(-1:Nt+1),jtz(0:Nt+1),jtz_intra(0:Nt+1),jtz_inter(0:Nt+1))
 
@@ -19,6 +20,9 @@ subroutine init_Ac
   omega_2 = omega_ev_2/(2d0*Ry)
   tpulse_2 = tpulse_fs_2/0.02418d0
   Tdelay = Tdelay_fs/0.02418d0
+
+  t_side = 2d0*pi/omega_1
+  rate_int = 0.1d0
 
 !  E0_1=E0_1_Vpm/(27.2114d0/0.529177210544d-10)
 !  omega_1 = omega_ev_1/(2d0*Ry)
@@ -72,6 +76,22 @@ subroutine init_Ac
         Act(it) = Act(it) -(E0_2/omega_2) &
           *cos(pi*(tt-0.5d0*tpulse_1-Tdelay)/tpulse_2)**4 &
           *sin(omega_2*(tt-0.5d0*tpulse_1-Tdelay))
+      end if
+    end do
+  case("cos4cos_side")
+    do it = 0,Nt+1
+      tt = dt*dble(it)
+
+      if(abs(tt-0.5d0*tpulse_1-Tdelay) < 0.5d0*tpulse_2)then
+        Act(it) = Act(it) -(E0_2/omega_2) &
+          *cos(pi*(tt-0.5d0*tpulse_1-Tdelay)/tpulse_2)**4 &
+          *sin(omega_2*(tt-0.5d0*tpulse_1-Tdelay))
+      end if
+
+      if(abs(tt-0.5d0*tpulse_1-Tdelay-t_side) < 0.5d0*tpulse_2)then
+        Act(it) = Act(it) -sqrt(rate_int)*(E0_2/omega_2) &
+          *cos(pi*(tt-0.5d0*tpulse_1-Tdelay-t_side)/tpulse_2)**4 &
+          *sin(omega_2*(tt-0.5d0*tpulse_1-Tdelay-t_side))
       end if
     end do
   case("cos2cos")  
